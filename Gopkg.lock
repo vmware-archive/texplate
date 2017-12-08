@@ -20,6 +20,12 @@
   version = "v1.0.1"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/apparentlymart/go-cidr"
+  packages = ["cidr"]
+  revision = "2bd8b58cf4275aeb086ade613de226773e29e853"
+
+[[projects]]
   name = "github.com/ghodss/yaml"
   packages = ["."]
   revision = "0ca9ea5df5451ffdf184b4428c902747c2c11cd7"
@@ -106,6 +112,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d386f26358ccadd56c35d58b2677286e5bd15ae02b5133dfed58de0642977223"
+  inputs-digest = "9e7e1357910d4223a8b81d4b20f956d8a8a524f8fb24a376b9d598637d7023e4"
   solver-name = "gps-cdcl"
   solver-version = 1

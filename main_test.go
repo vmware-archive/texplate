@@ -41,10 +41,11 @@ template_key: {{ .input_key }}
 `)
 
 		cmd := exec.Command(pathToMain, "execute", "-f", inputFile, templateFile)
-		output, err := cmd.Output()
-		Expect(err).To(BeNil(), string(output))
+		session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
+		Expect(err).To(BeNil())
+		Eventually(session).Should(gexec.Exit(0))
 
-		Expect(string(output)).To(MatchYAML(`
+		Expect(string(session.Out.Contents())).To(MatchYAML(`
 template_key: input_value
 `))
 	})
@@ -62,10 +63,11 @@ second: {{.key2}}
 `)
 
 		cmd := exec.Command(pathToMain, "execute", "-f", inputFile1, "-f", inputFile2, templateFile)
-		output, err := cmd.Output()
-		Expect(err).To(BeNil(), string(output))
+		session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
+		Expect(err).To(BeNil())
+		Eventually(session).Should(gexec.Exit(0))
 
-		Expect(string(output)).To(MatchYAML(`
+		Expect(string(session.Out.Contents())).To(MatchYAML(`
 first: value1
 second: value2
 `))
@@ -80,10 +82,11 @@ trimmed: {{ trim .whitespace }}
 `)
 
 		cmd := exec.Command(pathToMain, "execute", "-f", inputFile, templateFile)
-		output, err := cmd.Output()
-		Expect(err).To(BeNil(), string(output))
+		session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
+		Expect(err).To(BeNil())
+		Eventually(session).Should(gexec.Exit(0))
 
-		Expect(string(output)).To(MatchYAML(`
+		Expect(string(session.Out.Contents())).To(MatchYAML(`
 trimmed: value
 `))
 	})
@@ -121,6 +124,47 @@ input_key: input_value
 
 		Expect(string(session.Out.Contents())).To(MatchYAML(`
 template_key: input_value
+`))
+	})
+
+	It("adds an `escapeWhitespace` helper", func() {
+		inputFile := writeTempFile(`
+input_key: "\n\tnewlines!\r\f"
+`)
+		templateFile := writeTempFile(`
+escape_me: "{{ escapeWhitespace .input_key }}"
+`)
+
+		cmd := exec.Command(pathToMain, "execute", templateFile, "-f", inputFile)
+		output, err := cmd.Output()
+		Expect(err).To(BeNil(), string(output))
+
+		Expect(string(output)).To(MatchYAML(`
+escape_me: "\n\tnewlines!\r\f"
+`))
+	})
+
+	It("adds an `cidrhost` helper", func() {
+		inputFile := writeTempFile(`
+cidr1: 10.0.0.0/24
+cidr2: 10.0.1.0/24
+cidr3: 10.2.2.128/25
+`)
+		templateFile := writeTempFile(`
+cidr1: {{ cidrhost .cidr1 0 }}
+cidr2: {{ cidrhost .cidr2 1 }}
+cidr3: {{ cidrhost .cidr3 -1 }}
+`)
+
+		cmd := exec.Command(pathToMain, "execute", templateFile, "-f", inputFile)
+		session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
+		Expect(err).To(BeNil())
+		Eventually(session).Should(gexec.Exit(0))
+
+		Expect(string(session.Out.Contents())).To(MatchYAML(`
+cidr1: 10.0.0.0
+cidr2: 10.0.1.1
+cidr3: 10.2.2.255
 `))
 	})
 
