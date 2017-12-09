@@ -20,8 +20,6 @@ Flags:
 #### Included helper functions:
 
 - All the [Sprig](http://masterminds.github.io/sprig/) helpers, e.g. `env`, `trim`, and `list`
-- `escapeWhitespace <string>`
-  - Escapes the following whitespace characters: `\n\t\f\v\r`
 - `cidrhost <cidr> <hostIndex>`:
   - Returns an IP at the given index within that CIDR, e.g. `cidrhost 10.0.1.0/24 2` returns `10.0.1.2`
   - Adapted from Terraform's [cidrhost](https://www.terraform.io/docs/configuration/interpolation.html#cidrhost-iprange-hostnum-)

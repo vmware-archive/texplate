@@ -127,23 +127,6 @@ template_key: input_value
 `))
 	})
 
-	It("adds an `escapeWhitespace` helper", func() {
-		inputFile := writeTempFile(`
-input_key: "\n\tnewlines!\r\f"
-`)
-		templateFile := writeTempFile(`
-escape_me: "{{ escapeWhitespace .input_key }}"
-`)
-
-		cmd := exec.Command(pathToMain, "execute", templateFile, "-f", inputFile)
-		output, err := cmd.Output()
-		Expect(err).To(BeNil(), string(output))
-
-		Expect(string(output)).To(MatchYAML(`
-escape_me: "\n\tnewlines!\r\f"
-`))
-	})
-
 	It("adds an `cidrhost` helper", func() {
 		inputFile := writeTempFile(`
 cidr1: 10.0.0.0/24

@@ -3,11 +3,10 @@ package interpolater
 import (
 	"bytes"
 	"fmt"
-	"html/template"
 	"io"
 	"io/ioutil"
 	"net"
-	"strings"
+	"text/template"
 
 	"github.com/Masterminds/sprig"
 	goCidr "github.com/apparentlymart/go-cidr/cidr"
@@ -38,19 +37,6 @@ func (i Interpolater) Execute(basePath string, inputPaths []string) error {
 	}
 
 	customHelpers := map[string]interface{}{
-		"escapeWhitespace": func(value string) string {
-			charactersToEscape := map[string]string{
-				"\n": `\n`,
-				"\t": `\t`,
-				"\f": `\f`,
-				"\v": `\v`,
-				"\r": `\r`,
-			}
-			for k, v := range charactersToEscape {
-				value = strings.Replace(value, k, v, -1)
-			}
-			return value
-		},
 		"cidrhost": func(cidr string, hostIndex int) (string, error) {
 			// adapted from https://github.com/hashicorp/terraform/blob/fe0cc3b0db0d1a5676c3d1a92ea8c5ff829b4233/config/interpolate_funcs.go#L253-L264
 			_, network, err := net.ParseCIDR(cidr)
@@ -68,7 +54,7 @@ func (i Interpolater) Execute(basePath string, inputPaths []string) error {
 	}
 
 	t, err := template.New("template").
-		Funcs(sprig.FuncMap()).
+		Funcs(sprig.TxtFuncMap()).
 		Funcs(customHelpers).
 		Option("missingkey=error").
 		Parse(string(baseContents))
