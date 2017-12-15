@@ -80,7 +80,7 @@ func (i Interpolater) readInputVars(inputPaths []string) (map[string]interface{}
 		}
 
 		var fileVars map[string]interface{}
-		err = yaml.Unmarshal(fileContents, &fileVars)
+		err = yamlConverter.Unmarshal(fileContents, &fileVars)
 		if err != nil {
 			return nil, fmt.Errorf("expected '%s' to be a valid YAML file: %s", file, err)
 		}

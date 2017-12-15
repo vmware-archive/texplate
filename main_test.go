@@ -151,6 +151,32 @@ cidr3: 10.2.2.255
 `))
 	})
 
+	It("allows the hasKey helper in an array if the key does not exist in input", func() {
+		inputFile := writeTempFile(`
+array:
+- key: value
+`)
+		templateFile := writeTempFile(`
+array:
+{{range .array}}
+- key: {{.key}}
+  {{if hasKey . "other_key"}}
+  other_key: other_value
+  {{end}}
+{{end}}
+`)
+
+		cmd := exec.Command(pathToMain, "execute", templateFile, "-f", inputFile)
+		session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
+		Expect(err).To(BeNil())
+		Eventually(session).Should(gexec.Exit(0))
+
+		Expect(string(session.Out.Contents())).To(MatchYAML(`
+array:
+  - key: value
+`))
+	})
+
 	Describe("failure cases", func() {
 		It("exits 1 if template arg is not provided", func() {
 			cmd := exec.Command(pathToMain, "execute")
