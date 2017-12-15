@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -eu
+
+project_dir="$( cd "$( dirname "$0" )/.." && pwd )"
+
+pushd "${project_dir}" > /dev/null
+  mkdir -p "out"
+  for OS in linux darwin; do
+    echo "Building binary for ${OS}..."
+    CGO_ENABLED=0 GOOS=${OS} GOARCH=amd64 go build -o out/texplate_${OS}_amd64 main.go
+  done
+
+  echo "Sucessfully built binaries under ./out/"
+  ls -l "out/"
+popd > /dev/null
+
