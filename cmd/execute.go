@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ljfranklin/texplate-cli/interpolater"
+	"github.com/pivotal-cf/texplate/interpolater"
 	"github.com/spf13/cobra"
 )
 

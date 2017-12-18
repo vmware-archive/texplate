@@ -20,7 +20,7 @@ var _ = Describe("Main", func() {
 
 	BeforeSuite(func() {
 		var err error
-		pathToMain, err = gexec.Build("github.com/ljfranklin/texplate-cli")
+		pathToMain, err = gexec.Build("github.com/pivotal-cf/texplate")
 		Expect(err).To(BeNil())
 
 		tempDir, err = ioutil.TempDir("", "texplate")

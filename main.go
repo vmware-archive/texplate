@@ -1,6 +1,6 @@
 package main
 
-import "github.com/ljfranklin/texplate-cli/cmd"
+import "github.com/pivotal-cf/texplate/cmd"
 
 func main() {
 	cmd.Execute()
