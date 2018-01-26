@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -125,6 +126,42 @@ input_key: input_value
 		Expect(string(session.Out.Contents())).To(MatchYAML(`
 template_key: input_value
 `))
+	})
+
+	It("writes the output to a given file", func() {
+		outputPath := filepath.Join(tempDir, "output.yml")
+		templateFile := writeTempFile(`
+key: value
+`)
+
+		cmd := exec.Command(pathToMain, "execute", "--output-file", outputPath, templateFile)
+		session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
+		Expect(err).To(BeNil())
+		Eventually(session).Should(gexec.Exit(0))
+
+		Expect(string(session.Err.Contents())).To(ContainSubstring(outputPath))
+
+		Expect(outputPath).To(BeAnExistingFile())
+		outputContents, err := ioutil.ReadFile(outputPath)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(string(outputContents)).To(MatchYAML(`
+key: value
+`))
+	})
+
+	It("errors if given an invalid output path", func() {
+		outputPath := filepath.Join(tempDir, "dir-that-does-not-exist", "output.yml")
+		templateFile := writeTempFile(`
+key: value
+`)
+
+		cmd := exec.Command(pathToMain, "execute", "--output-file", outputPath, templateFile)
+		session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
+		Expect(err).To(BeNil())
+		Eventually(session).Should(gexec.Exit())
+
+		Expect(string(session.Err.Contents())).To(ContainSubstring(outputPath))
+		Expect(outputPath).ToNot(BeAnExistingFile())
 	})
 
 	It("adds an `cidrhost` helper", func() {
