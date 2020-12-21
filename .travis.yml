@@ -1,0 +1,10 @@
+language: go
+cache:
+  directories:
+    - $GOPATH/pkg/mod
+
+# allow internal package imports, necessary for forked repositories
+go_import_path: github.com/pivotal-cf/texplate
+
+go:
+  - 1.15
