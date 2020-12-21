@@ -8,7 +8,7 @@ import (
 	"net"
 	"text/template"
 
-	"github.com/Masterminds/sprig"
+	"github.com/Masterminds/sprig/v3"
 	goCidr "github.com/apparentlymart/go-cidr/cidr"
 	yamlConverter "github.com/ghodss/yaml"
 	yaml "gopkg.in/yaml.v2"
